@@ -11,7 +11,7 @@ final class RedisLinkCache implements LinkCache
 {
     public function put(string $slug, string $originalUrl, ?DateTimeInterface $expiresAt): void
     {
-        $store = Cache::store('redis');
+        $store = Cache::store(config('cache.default'));
 
         if ($expiresAt === null) {
             $store->forever($slug, $originalUrl);

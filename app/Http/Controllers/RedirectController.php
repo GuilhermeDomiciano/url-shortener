@@ -20,7 +20,7 @@ class RedirectController extends Controller
     public function __invoke(Request $request, string $slug): RedirectResponse|Response
     {
         $startedAt = microtime(true);
-        $cache = Cache::store('redis');
+        $cache = Cache::store(config('cache.default'));
         $cached = null;
         $cacheHit = false;
 
