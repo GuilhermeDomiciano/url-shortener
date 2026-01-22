@@ -2,6 +2,8 @@
 
 namespace App\Http\Controllers;
 
+use App\Jobs\RegisterClick;
+use Illuminate\Http\Request;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Response;
 use Illuminate\Support\Carbon;
@@ -14,7 +16,7 @@ class RedirectController extends Controller
     private const NEGATIVE_SENTINEL = '__missing__';
     private const NEGATIVE_TTL_SECONDS = 60;
 
-    public function __invoke(string $slug): RedirectResponse|Response
+    public function __invoke(Request $request, string $slug): RedirectResponse|Response
     {
         $cache = Cache::store('redis');
         $cached = null;
@@ -30,11 +32,18 @@ class RedirectController extends Controller
         }
 
         if (is_string($cached) && $cached !== '') {
+            RegisterClick::dispatch(
+                $slug,
+                $request->ip(),
+                $request->userAgent(),
+                Carbon::now()
+            );
+
             return redirect()->away($cached, 302);
         }
 
         $record = DB::table('links')
-            ->select('original_url', 'expires_at')
+            ->select('id', 'original_url', 'expires_at')
             ->where('slug', $slug)
             ->first();
 
@@ -61,6 +70,13 @@ class RedirectController extends Controller
                 abort(410);
             }
         }
+
+        RegisterClick::dispatch(
+            $slug,
+            $request->ip(),
+            $request->userAgent(),
+            Carbon::now()
+        );
 
         try {
             if ($record->expires_at === null) {
