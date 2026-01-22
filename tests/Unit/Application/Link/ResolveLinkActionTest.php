@@ -46,4 +46,9 @@ final class FakeResolveLinkRepository implements LinkRepository
     {
         return $this->link && $this->link->slug() === $slug ? $this->link : null;
     }
+
+    public function updateSlug(int $id, string $slug): Link
+    {
+        throw new \RuntimeException('Not implemented');
+    }
 }

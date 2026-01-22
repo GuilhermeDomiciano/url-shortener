@@ -10,4 +10,6 @@ interface LinkRepository
     public function create(array $data): Link;
 
     public function findBySlug(string $slug): ?Link;
+
+    public function updateSlug(int $id, string $slug): Link;
 }

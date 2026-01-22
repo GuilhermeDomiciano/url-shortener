@@ -31,6 +31,15 @@ final class EloquentLinkRepository implements LinkRepository
         return $model ? $this->toDomain($model) : null;
     }
 
+    public function updateSlug(int $id, string $slug): Link
+    {
+        $model = LinkModel::query()->findOrFail($id);
+        $model->slug = $slug;
+        $model->save();
+
+        return $this->toDomain($model);
+    }
+
     private function toDomain(LinkModel $model): Link
     {
         return new Link(
