@@ -394,3 +394,30 @@ Ajustes que fazem diferença fora do dev.
 - `test:` testes
 - `docs:` documentação
 - `fix:` correção
+
+---
+
+## 7) Como rodar (dev)
+1) Suba os serviços:
+   - `docker compose build --no-cache`
+   - `docker compose up -d`
+2) Instale dependências PHP:
+   - `docker compose exec app composer install`
+3) Gere a chave e rode migrations:
+   - `docker compose exec app php artisan key:generate`
+   - `docker compose exec app php artisan migrate`
+4) Acesse:
+   - `http://localhost:8080/health`
+   - `http://localhost:8080/{slug}`
+
+Se for usar o frontend, rode `npm install` e `npm run build` na máquina local.
+
+---
+
+## 8) Produção e hardening
+- Ative caches:
+  - `php artisan config:cache`
+  - `php artisan route:cache`
+- OPcache já está habilitado via `docker/php.ini` no container.
+- Headers de segurança mínimos são aplicados no Nginx.
+- Pooling de conexões: use PgBouncer quando houver muitos workers/replicas. Pode ser adicionado como serviço separado no `docker-compose.yml` e configurado via `DB_HOST` apontando para o pool.
