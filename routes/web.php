@@ -12,4 +12,5 @@ Route::get('/health', function () {
 });
 
 Route::get('/{slug}', RedirectController::class)
-    ->where('slug', '[A-Za-z0-9_-]{3,64}');
+    ->where('slug', '[A-Za-z0-9_-]{3,64}')
+    ->middleware('throttle:redirect');
