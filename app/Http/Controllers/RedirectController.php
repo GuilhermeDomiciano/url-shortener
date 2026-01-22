@@ -9,6 +9,7 @@ use Illuminate\Http\Response;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
 use Throwable;
 
 class RedirectController extends Controller
@@ -18,20 +19,28 @@ class RedirectController extends Controller
 
     public function __invoke(Request $request, string $slug): RedirectResponse|Response
     {
+        $startedAt = microtime(true);
         $cache = Cache::store('redis');
         $cached = null;
+        $cacheHit = false;
 
         try {
             $cached = $cache->get($slug);
-        } catch (Throwable) {
+        } catch (Throwable $exception) {
+            Log::warning('redirect.cache_error', [
+                'slug' => $slug,
+                'error' => $exception->getMessage(),
+            ]);
             $cached = null;
         }
 
         if ($cached === self::NEGATIVE_SENTINEL) {
+            $this->logRedirect($slug, false, $startedAt);
             abort(404);
         }
 
         if (is_string($cached) && $cached !== '') {
+            $cacheHit = true;
             RegisterClick::dispatch(
                 $slug,
                 $request->ip(),
@@ -39,13 +48,22 @@ class RedirectController extends Controller
                 Carbon::now()
             );
 
+            $this->logRedirect($slug, true, $startedAt);
             return redirect()->away($cached, 302);
         }
 
-        $record = DB::table('links')
-            ->select('id', 'original_url', 'expires_at')
-            ->where('slug', $slug)
-            ->first();
+        try {
+            $record = DB::table('links')
+                ->select('id', 'original_url', 'expires_at')
+                ->where('slug', $slug)
+                ->first();
+        } catch (Throwable $exception) {
+            Log::error('redirect.db_error', [
+                'slug' => $slug,
+                'error' => $exception->getMessage(),
+            ]);
+            abort(500);
+        }
 
         if (!$record) {
             try {
@@ -54,6 +72,7 @@ class RedirectController extends Controller
                 // ignore cache failures
             }
 
+            $this->logRedirect($slug, $cacheHit, $startedAt);
             abort(404);
         }
 
@@ -67,6 +86,7 @@ class RedirectController extends Controller
                     // ignore cache failures
                 }
 
+                $this->logRedirect($slug, $cacheHit, $startedAt);
                 abort(410);
             }
         }
@@ -91,6 +111,18 @@ class RedirectController extends Controller
             // ignore cache failures
         }
 
+        $this->logRedirect($slug, $cacheHit, $startedAt);
         return redirect()->away($record->original_url, 302);
+    }
+
+    private function logRedirect(string $slug, bool $cacheHit, float $startedAt): void
+    {
+        $latencyMs = (int) round((microtime(true) - $startedAt) * 1000);
+
+        Log::info('redirect.request', [
+            'slug' => $slug,
+            'cache_hit' => $cacheHit,
+            'latency_ms' => $latencyMs,
+        ]);
     }
 }
