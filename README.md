@@ -421,3 +421,4 @@ Se for usar o frontend, rode `npm install` e `npm run build` na máquina local.
 - OPcache já está habilitado via `docker/php.ini` no container.
 - Headers de segurança mínimos são aplicados no Nginx.
 - Pooling de conexões: use PgBouncer quando houver muitos workers/replicas. Pode ser adicionado como serviço separado no `docker-compose.yml` e configurado via `DB_HOST` apontando para o pool.
+  - Já existe serviço `pgbouncer` no `docker-compose.yml` (porta `6432`). Para usar, aponte `DB_HOST=pgbouncer` e `DB_PORT=6432`.
