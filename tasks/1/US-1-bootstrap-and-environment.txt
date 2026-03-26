@@ -1,0 +1,53 @@
+US-1 — Bootstrap and Environment
+=================================
+
+CONTEXTO
+--------
+Estabelecer a base sólida para o projeto de URL Shortener, com Docker e infraestrutura pronta para desenvolvimento. Este é o passo zero que prepara o ambiente para todos os checkpoints seguintes.
+
+HISTORIA
+--------
+Como desenvolvedor,
+quero um projeto Laravel rodando em Docker com PostgreSQL + Redis,
+para ter uma base confiável e reprodutível que suporte os próximos checkpoints.
+
+CRITERIOS DE ACEITACAO
+-----------------------
+1. Projeto Laravel 11 criado e funcional
+2. Docker Compose configurado com 4 serviços: app (PHP-FPM), nginx, postgres, redis
+3. Arquivo .env configurado com DB_HOST=postgres, REDIS_HOST=redis
+4. Containers subindo sem erros: docker compose up -d
+5. Rota /health implementada retornando {"status":"ok"} com HTTP 200
+6. php artisan migrate executável dentro do container sem erros
+7. Aplicação acessível em http://localhost:8080/health
+
+REGRAS TECNICAS
+---------------
+- Usar Laravel 11 + PHP 8.3+
+- PostgreSQL como database primário
+- Redis para cache/queue/sessions
+- Nginx como reverse proxy (não usar app nativo)
+- Seguir convenções do CLAUDE.md: sem over-engineering, implementação direta
+- Dockerfile e docker-compose.yml devem ser reprodutíveis
+- Variáveis de ambiente via .env (não commitar, usar .env.example)
+- Migrations deve rodar automaticamente ou via comando artisan
+
+CRITERIOS DE TESTE (QA)
+------------------------
+API:
+  - GET /health retorna JSON {"status":"ok"} com status 200
+  - Verificar que docker compose ps mostra 4 containers rodando
+  - Verificar que php artisan tinker inicia sem erro
+
+E2E:
+  - curl http://localhost:8080/health retorna resposta esperada
+  - Verificar logs do app sem erros críticos
+  - Confirmar conectividade postgres e redis via logs
+
+FORA DO ESCOPO
+--------------
+- Não implementar endpoints funcionais (apenas /health como prova)
+- Não implementar autenticação neste checkpoint
+- Não implementar models ou migrations de negócio (apenas estrutura)
+- Não fazer deploy em produção (apenas dev local)
+- Não otimizar ainda OPcache ou caching
