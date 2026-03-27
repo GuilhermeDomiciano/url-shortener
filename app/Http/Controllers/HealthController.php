@@ -3,6 +3,8 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\JsonResponse;
+use Illuminate\Http\Request;
+use Illuminate\Http\Response;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
@@ -11,7 +13,7 @@ use Throwable;
 
 class HealthController extends Controller
 {
-    public function check(): JsonResponse
+    public function check(Request $request): JsonResponse|Response
     {
         $timestamp = Carbon::now()->format(DATE_ATOM);
         $dbStatus = 'ok';
@@ -24,7 +26,7 @@ class HealthController extends Controller
             $dbStatus = 'error';
             Log::error('health.database', [
                 'status' => 'error',
-                'error' => $exception->getMessage(),
+                'error'  => $exception->getMessage(),
             ]);
         }
 
@@ -35,24 +37,40 @@ class HealthController extends Controller
             $redisStatus = 'error';
             Log::error('health.redis', [
                 'status' => 'error',
-                'error' => $exception->getMessage(),
+                'error'  => $exception->getMessage(),
             ]);
         }
 
-        if ($dbStatus === 'ok' && $redisStatus === 'ok') {
-            return response()->json([
-                'status'    => 'ok',
-                'timestamp' => $timestamp,
-            ], 200);
+        $allOk    = $dbStatus === 'ok' && $redisStatus === 'ok';
+        $status   = $allOk ? 'ok' : 'error';
+        $httpCode = $allOk ? 200 : 503;
+        $services = [
+            'database' => $dbStatus,
+            'redis'    => $redisStatus,
+        ];
+
+        // Return HTML view when the request prefers text/html (browser requests)
+        if ($request->accepts(['text/html']) && ! $request->wantsJson()) {
+            return response()
+                ->view('health', [
+                    'status'    => $status,
+                    'timestamp' => $timestamp,
+                    'services'  => $services,
+                ], $httpCode)
+                ->header('Cache-Control', 'no-store, no-cache');
         }
 
-        return response()->json([
-            'status'    => 'error',
+        $payload = [
+            'status'    => $status,
             'timestamp' => $timestamp,
-            'services'  => [
-                'database' => $dbStatus,
-                'redis'    => $redisStatus,
-            ],
-        ], 503);
+        ];
+
+        if (! $allOk) {
+            $payload['services'] = $services;
+        }
+
+        return response()
+            ->json($payload, $httpCode)
+            ->header('Cache-Control', 'no-store, no-cache');
     }
 }
