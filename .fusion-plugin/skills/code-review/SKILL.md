@@ -1,8 +1,8 @@
 ---
-name: Code Review
 description: Revisa codigo com foco em qualidade, seguranca e boas praticas
 argument-hint: escopo da revisao: arquivo, diretorio ou branch diff
 ---
+
 Realize uma revisao de codigo completa.
 
 ## Escopo

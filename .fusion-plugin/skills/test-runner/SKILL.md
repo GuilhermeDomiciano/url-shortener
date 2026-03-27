@@ -1,8 +1,8 @@
 ---
-name: Test Runner
 description: Detecta e executa testes do projeto (Jest, Playwright, Vitest, etc.)
 argument-hint: filtro de testes (opcional — ex: "api", "e2e", "unit")
 ---
+
 Detecte o framework de testes do projeto e execute os testes.
 
 ## Deteccao

@@ -1,8 +1,8 @@
 ---
-name: Analyze Codebase
 description: Analisa estrutura, dependencias e arquitetura do projeto
 argument-hint: foco da analise (opcional — ex: "backend", "deps", "architecture")
 ---
+
 Analise o codebase do projeto e gere um relatorio de contexto.
 
 ## O que analisar

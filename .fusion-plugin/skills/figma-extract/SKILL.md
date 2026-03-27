@@ -1,8 +1,8 @@
 ---
-name: Figma Extract
 description: Extrai dados de design do Figma via MCP (nodes, imagens, estilos)
 argument-hint: URL do Figma (ex: https://www.figma.com/design/...)
 ---
+
 Extraia dados de design de um arquivo Figma.
 
 ## Passos

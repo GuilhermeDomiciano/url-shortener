@@ -1,8 +1,8 @@
 ---
-name: Database Migration
 description: Cria ou executa migrations de banco de dados
 argument-hint: acao: "create <nome>" ou "run" ou "status"
 ---
+
 Gerencie migrations do banco de dados.
 
 ## Acoes

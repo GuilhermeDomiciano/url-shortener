@@ -1,8 +1,8 @@
 ---
-name: squad
 description: Executa a squad completa de agentes para uma GitHub issue.
 argument-hint: <número da issue>
 ---
+
 Execute o comando abaixo e aguarde terminar. Não pergunte nada ao usuário.
 
 ```

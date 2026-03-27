@@ -1,8 +1,8 @@
 ---
-name: Git Commit
 description: Faz stage e commit das alteracoes com mensagem semantica
 argument-hint: mensagem do commit (opcional — gera automaticamente se omitido)
 ---
+
 Faca commit das alteracoes pendentes no repositorio.
 
 ## Passos

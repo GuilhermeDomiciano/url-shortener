@@ -1,8 +1,8 @@
 ---
-name: Git Push & PR
 description: Push da branch atual e abre PR no GitHub/GitLab
 argument-hint: titulo do PR (opcional)
 ---
+
 Faca push da branch atual e abra um Pull Request.
 
 ## Passos

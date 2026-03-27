@@ -1,7 +1,7 @@
 ---
-name: Deploy Check
 description: Verifica se o projeto esta pronto para deploy (build, lint, testes)
 ---
+
 Execute uma verificacao completa pre-deploy.
 
 ## Checklist

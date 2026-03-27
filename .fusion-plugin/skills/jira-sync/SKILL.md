@@ -1,8 +1,8 @@
 ---
-name: Jira Sync
 description: Sincroniza status e comentarios com Jira via MCP
 argument-hint: issue key (ex: PROJ-123) e acao (status/comment/transition)
 ---
+
 Interaja com issues do Jira via MCP.
 
 ## Acoes

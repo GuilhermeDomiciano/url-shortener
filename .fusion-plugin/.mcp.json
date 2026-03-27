@@ -8,7 +8,7 @@
       "type": "stdio",
       "command": "npx",
       "env": {
-        "FIGMA_PERSONAL_ACCESS_TOKEN": "REDACTED"
+        "FIGMA_PERSONAL_ACCESS_TOKEN": ""
       }
     }
   }
