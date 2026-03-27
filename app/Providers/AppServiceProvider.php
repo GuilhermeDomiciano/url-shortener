@@ -3,8 +3,10 @@
 namespace App\Providers;
 
 use App\Application\Link\LinkCache;
+use App\Domain\Link\AnalyticsRepository;
 use App\Domain\Link\LinkRepository;
 use App\Infrastructure\Cache\RedisLinkCache;
+use App\Infrastructure\Persistence\EloquentAnalyticsRepository;
 use App\Infrastructure\Persistence\EloquentLinkRepository;
 use Illuminate\Cache\RateLimiting\Limit;
 use Illuminate\Http\Request;
@@ -20,6 +22,7 @@ class AppServiceProvider extends ServiceProvider
     {
         $this->app->bind(LinkRepository::class, EloquentLinkRepository::class);
         $this->app->bind(LinkCache::class, RedisLinkCache::class);
+        $this->app->bind(AnalyticsRepository::class, EloquentAnalyticsRepository::class);
     }
 
     /**

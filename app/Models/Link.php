@@ -4,10 +4,11 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\SoftDeletes;
 
 class Link extends Model
 {
-    use HasFactory;
+    use HasFactory, SoftDeletes;
 
     protected $fillable = [
         'slug',
@@ -18,5 +19,6 @@ class Link extends Model
 
     protected $casts = [
         'expires_at' => 'datetime',
+        'deleted_at' => 'datetime',
     ];
 }
