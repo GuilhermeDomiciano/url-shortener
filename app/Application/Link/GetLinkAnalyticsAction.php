@@ -65,6 +65,13 @@ final class GetLinkAnalyticsAction
 
             return [
                 'slug'             => $slug,
+                'original_url'     => $link->originalUrl(),
+                'expires_at'       => $link->expiresAt()
+                    ? Carbon::instance($link->expiresAt())->format(DATE_ATOM)
+                    : null,
+                'created_at'       => $link->createdAt()
+                    ? Carbon::instance($link->createdAt())->format(DATE_ATOM)
+                    : null,
                 'total_clicks'     => $totalClicks,
                 'clicks_today'     => $clicksToday,
                 'clicks_this_week' => $clicksThisWeek,

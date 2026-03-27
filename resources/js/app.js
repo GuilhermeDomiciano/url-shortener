@@ -433,7 +433,7 @@ function initAnalyticsPage() {
 
         // Fill missing days with zero
         const dataMap = {};
-        filtered.forEach(d => { dataMap[d.date] = d.clicks; });
+        filtered.forEach(d => { dataMap[d.date] = d.count; });
 
         const labels = [];
         const values = [];
@@ -580,8 +580,8 @@ function initAnalyticsPage() {
         tbody.innerHTML = visible.map(click => {
             const timeTitle = formatDate(click.clicked_at);
             const relTime = relativeTime(click.clicked_at);
-            const ip = maskIp(click.ip);
-            const ua = parseUserAgent(click.user_agent);
+            const ip = click.ip_masked || 'N/A';
+            const ua = click.user_agent_parsed || 'Unknown';
             return `<tr class="border-b border-neutral-100 hover:bg-neutral-50 transition-colors">
                 <td class="py-3 pr-4">
                     <span title="${timeTitle}" class="cursor-default">${relTime}</span>
@@ -624,7 +624,7 @@ function initAnalyticsPage() {
             const data = await response.json();
 
             populateHeader(data);
-            populateKPIs(data.summary || {});
+            populateKPIs(data);
 
             allDailyClicks = data.daily_clicks || [];
             allRecentClicks = data.recent_clicks || [];
